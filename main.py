@@ -2,6 +2,7 @@ import os
 
 WIDTH = 120
 HEIGHT = 30
+BACKGROUND = " "
 
 class Vector:
     def __init__(self, x, y):
@@ -27,33 +28,36 @@ class Vector:
         return Vector(self.x / scalar, self.y / scalar)
     
 class Point(Vector):
-    SYMBOL = "#"
-    def __init__(self, x, y):
+    def __init__(self, x, y, symbol="#"):
         super().__init__(x, y)
+        self.symbol = symbol
 
 class Engine:
-    points = []
-    def __init__(self, pos: Point):
-        Engine.points.append(pos)
+    def __init__(self, width, height, background):
+        self.width = width
+        self.height = height
+        self.background = background
+        self.points = []
 
-    @staticmethod
-    def render():
-        buffer = []
+    def add_point(self, point):
+        self.points.append(point)
 
-        for y in range(HEIGHT):
-            line = ""
-            for x in range(WIDTH):
-                draw = False
-                for p in Engine.points:
-                    if x == p.x and y == p.y:
-                        symbol = p.SYMBOL
-                        draw = True
-                        break
-                if draw:
-                    line += symbol
-                else:
-                    line += " "
-            buffer.append(line)
+    def render(self):
+        grid = [[self.background for _ in range(self.width)] for _ in range(self.height)]
 
+        for p in self.points:
+            if 0 <= p.x < self.width and 0 <= p.y < self.height:
+                grid[p.y][p.x] = p.symbol
+
+        # Преобразуем в строки
+        lines = ["".join(row) for row in grid]
+
+        # Очистка экрана и вывод
         os.system("cls" if os.name == "nt" else "clear")
-        print("\n".join(buffer))
+        print("\n".join(lines))
+
+engine = Engine(WIDTH, HEIGHT, BACKGROUND)
+
+
+
+engine.render()
