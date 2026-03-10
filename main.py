@@ -1,7 +1,7 @@
 import os
 
-WIDTH = 120
-HEIGHT = 30
+WIDTH = 20
+HEIGHT = 20
 BACKGROUND = " "
 
 class Vector:
@@ -31,23 +31,28 @@ class Point(Vector):
     def __init__(self, x, y, symbol="#"):
         super().__init__(x, y)
         self.symbol = symbol
+    def get_points(self):
+        return [self] 
 
 class Engine:
     def __init__(self, width, height, background):
         self.width = width
         self.height = height
         self.background = background
-        self.points = []
+        self.drawables = []
 
-    def add_point(self, point):
-        self.points.append(point)
+    def add(self, drawable):
+        self.drawables.append(drawable)
 
     def render(self):
         grid = [[self.background for _ in range(self.width)] for _ in range(self.height)]
 
-        for p in self.points:
-            if 0 <= p.x < self.width and 0 <= p.y < self.height:
-                grid[p.y][p.x] = p.symbol
+        for obj in self.drawables:
+            for point in obj.get_points():
+                x  = int(point.x)
+                y = int(point.y)
+                if 0 <= x < self.width and 0 <= y < self.height:
+                    grid[y][x] = point.symbol
 
         # Преобразуем в строки
         lines = ["".join(row) for row in grid]
